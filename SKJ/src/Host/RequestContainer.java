@@ -14,7 +14,7 @@ public class RequestContainer {
     }
 
     public void add(int hostId, Request req) {
-        System.out.println(hostId + "    " +req.toString() + "otrzymalismy request");
+        System.out.println(hostId + "    " +req.toString() + "dodany request");
         requests.putIfAbsent(hostId, req);
     }
 
