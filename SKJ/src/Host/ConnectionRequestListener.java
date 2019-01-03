@@ -9,16 +9,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ConnectionListener implements Runnable {
+public class ConnectionRequestListener implements Runnable {
     private static int listenerPort = 10000;
 
     int ownerId;
     private ServerSocket serverSocket;
     private HostConnectionContainer connectionContainer;
+    private RequestContainer requestContainer;
 
-    public ConnectionListener(int ownerId, HostConnectionContainer connectionContainer) {
+    public ConnectionRequestListener(int ownerId, HostConnectionContainer connectionContainer, RequestContainer requestContainer) {
         this.ownerId = ownerId;
         this.connectionContainer = connectionContainer;
+        this.requestContainer = requestContainer;
         listenerPort += ownerId;
         createServerSock();
     }
@@ -33,10 +35,12 @@ public class ConnectionListener implements Runnable {
 
     private void handleNewConnection(Socket socket) {
         Connection newConnection = new Connection(socket);
-        newConnection.send(new Request(RequestCode.INTRODUCTION, ownerId));
+        Request newRequest = new Request(RequestCode.INTRODUCTION, ownerId);
+        newConnection.send(newRequest);
         Object recv = newConnection.receive();
         if (recv instanceof Introduction) {
             Introduction intro = (Introduction) recv;
+            requestContainer.add(intro.Id,newRequest);
             connectionContainer.add(intro.Id, newConnection);
 
         }
@@ -44,11 +48,13 @@ public class ConnectionListener implements Runnable {
 
     @Override
     public void run() {
-        while(true) try {
-            Socket sock = serverSocket.accept();
-            handleNewConnection(sock);
-        } catch (IOException e) {
-            e.printStackTrace();
+        while(true) {
+            try {
+                Socket sock = serverSocket.accept();
+                handleNewConnection(sock);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -14,12 +14,12 @@ public class RequestContainer {
     }
 
     public void add(int hostId, Request req) {
-        System.out.println(hostId + "    " +req.toString() + "dodany request");
+        System.out.println("Host: " + hostId + " Wartość requestu " + req.toString() + " "  + "Został dodany do kolejki");
         requests.putIfAbsent(hostId, req);
     }
 
-    public void remove(int hostId) {
-        requests.remove(hostId);
+    public void remove(int hostId, Request req) {
+        requests.remove(hostId, req);
     }
 
     public Request getRequests (int hostId){
