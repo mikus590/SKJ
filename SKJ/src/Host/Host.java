@@ -55,7 +55,6 @@ public class Host {
                 conn.send(new Introduction(this.id));
                 Request r = (Request) recv;
                 connectionContainer.add(r.getRequesterId(), conn);
-                requestContainer.add(r.getRequesterId(), req);
             }
         } catch (Exception e) {
             e.printStackTrace();
