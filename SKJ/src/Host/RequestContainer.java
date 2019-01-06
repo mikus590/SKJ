@@ -14,7 +14,7 @@ public class RequestContainer {
     }
 
     public void add(int hostId, Request req) {
-        System.out.println("Host: " + hostId + " Wartość requestu " + req.toString() + " "  + "Został dodany do kolejki");
+        System.out.println("Host: " + hostId + " Wartość requestu " + req.toString() + "Został dodany do kolejki");
         requests.putIfAbsent(hostId, req);
     }
 

@@ -48,13 +48,11 @@ public class ConnectionRequestListener implements Runnable {
 
     @Override
     public void run() {
-        while(true) {
-            try {
-                Socket sock = serverSocket.accept();
-                handleNewConnection(sock);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        while(true) try {
+            Socket sock = serverSocket.accept();
+            handleNewConnection(sock);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

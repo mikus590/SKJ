@@ -1,6 +1,7 @@
 package Host;
 
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class CommandLine implements Runnable {
@@ -14,14 +15,18 @@ public class CommandLine implements Runnable {
 
     public void command(String command) {
         String[] commandArgs = command.split("\\s+");
-        System.out.println(commandArgs[0] + " " + commandArgs[1]);
-        //po spacji bierze komende
         switch (commandArgs[0]){
             case "connect":
                 host.establishConn(Integer.parseInt(commandArgs[1]));
                 break;
             case "list":
                 host.execListCommand(Integer.parseInt(commandArgs[1]));
+                break;
+            case "push":
+                host.execPushCommand(
+                        Integer.parseInt(commandArgs[1]),
+                        Arrays.copyOfRange(commandArgs, 2, commandArgs.length)
+                );
                 break;
             default:
                 System.out.println("Unknown command");

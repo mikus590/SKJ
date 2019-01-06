@@ -5,6 +5,7 @@ import Utils.*;
 import java.io.File;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Host {
     private int id;
@@ -20,16 +21,17 @@ public class Host {
         this.id = id;
         commandLine = new CommandLine(this);
         connectionContainer = new HostConnectionContainer();
+        requestContainer = new RequestContainer();
         connectionRequestListener = new ConnectionRequestListener(id, connectionContainer, requestContainer);
         dirPath = "D:\\Torrent\\TORrent_" + this.id;
-        System.out.println(dirPath);
+        initFiles(dirPath);
         Thread t1 = new Thread(connectionRequestListener);
         Thread t2 = new Thread(commandLine);
 
         t1.start();
         t2.start();
     }
-    private void initFiles() {
+    private void initFiles(String dirPath) {
         files = new ArrayList<>();
         File[] directory = new File(dirPath).listFiles();
         if (directory != null) {
@@ -49,7 +51,6 @@ public class Host {
         try {
             Socket s = new Socket("localhost", id + 10000);
             Connection conn = new Connection(s);
-            Request req = new Request(RequestCode.INTRODUCTION,this.id);
             Object recv = conn.receive();
             if (recv instanceof Request) {
                 conn.send(new Introduction(this.id));
@@ -62,11 +63,41 @@ public class Host {
     }
     public void execListCommand(int id) {
             try {
-                initFiles();
-                listFiles();
+                Connection getconn = connectionContainer.getConnection(id);
+                if(getconn != null){
+                    dirPath = "D:\\Torrent\\TORrent_" + id;
+                    initFiles(dirPath);
+                    listFiles();
+                }
+                else {
+                    System.out.println("Brak połączenia dla danego hosta");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
     }
+    public void execPushCommand(int id,String[] pushArgs) {
+        //dirPath = "D:\\Torrent\\TORrent_" + id;
+        String fileName = pushArgs[0];
+        Connection conn = connectionContainer.getConnection(id);
+        System.out.println("Połączony zostałeś do hosta: " + id + " Połączenie:  " +conn.toString());
+        if (conn != null) {
+            Optional<File> fileOptional = getFile(fileName);
+            System.out.println(fileOptional);
+            if (fileOptional.isPresent()) {
+                conn.send(fileOptional.get());
+            }
+        }
+    }
 
+    private Optional<File> getFile(String fileName) {
+        for(FileData fileData : files) {
+            if(fileData.getFile().getName().equals(fileName)) {
+                return Optional.of(fileData.getFile());
+            }
+        }
+        return Optional.empty();
+    }
 }
+
+

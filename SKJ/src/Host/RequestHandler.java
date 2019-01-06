@@ -7,6 +7,7 @@ import Utils.RequestCode;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
 
 public class RequestHandler implements Runnable  {
 
@@ -14,18 +15,14 @@ public class RequestHandler implements Runnable  {
     private ServerSocket serverSocket;
     private HostConnectionContainer connectionContainer;
     private RequestContainer requestContainer;
+    private LinkedList<RequestContainer> requestBuffer;
 
-    //private void handleNewConnection(Socket socket) {
-    //  Connection newConnection = new Connection(socket);
-    //  newConnection.send(new Request(RequestCode.INTRODUCTION, ownerId));
-    //  Object recv = newConnection.receive();
-    //  if (recv instanceof Introduction) {
-    //      Introduction intro = (Introduction) recv;
-    //      connectionContainer.add(intro.Id, newConnection);
-    //      requestContainer.add(intro.Id, newConnection);
+    public RequestHandler(Host owner) {
+        requestBuffer = new LinkedList<>();
+       // this.owner = owner;
+        //owner.listen(requestBuffer);
+    }
 
-    //  }
-    //}
 
     @Override
     public void run() {
